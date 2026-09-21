@@ -17,4 +17,5 @@ Sitio estático (HTML + CSS, sin dependencias) para publicar con GitHub Pages.
 ## Contratos
 
 - `contratos/contrato-locacion-obra-albanileria.md`: prototipo de contrato de locación de obra (albañilería) con campos `[ ]` para completar.
+- `contratos/contrato-locacion-obra-albanileria.docx`: el mismo contrato en Word, listo para imprimir o completar (A4, márgenes 2,5 cm). Generado desde el `.md`: si se edita uno, actualizar el otro.
 - El repo es público y GitHub Pages sirve todo lo que hay en la rama: **no subir versiones con datos reales** (nombres, DNI, montos). Completarlas fuera del repo.
