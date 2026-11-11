@@ -18,3 +18,7 @@ Sitio estático (HTML + CSS, sin dependencias) para publicar con GitHub Pages.
 
 - `contratos/contrato-locacion-obra-albanileria.md`: prototipo de contrato de locación de obra (albañilería) con campos `[ ]` para completar.
 - El repo es público y GitHub Pages sirve todo lo que hay en la rama: **no subir versiones con datos reales** (nombres, DNI, montos). Completarlas fuera del repo.
+
+## Estudio de mercado
+
+- `estudio-mercado/relevamiento-2026-11.md`: comparables de galpones en alquiler y venta en Mendoza (precios pedidos, noviembre 2026). Es público como el resto del repo.
