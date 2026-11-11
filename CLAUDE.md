@@ -11,8 +11,9 @@ hacer sin figurar en la agenda de alguien.
 1. **Al empezar la sesión, preguntar quién está hablando** (antes de hacer nada):
    *"¿Quién sos? (Thomas, Marianela, Luis, Gastón, …)"*. Si el mensaje ya lo dice, no repreguntar.
 2. **Cada pedido de trabajo se registra como tarea en el Planify de esa persona**, apenas se
-   empieza, con nombre MUY resumido (≤ 60 caracteres) y una nota de 1–3 líneas con el
-   contexto. Queda `done=false` hasta que se cierre (punto 4). Si la sesión termina sin
+   empieza, con nombre MUY resumido (≤ 60 caracteres) y una nota con formato fijo:
+   `Falta: <qué hay que hacer>. Pedido de <Nombre> · cargada por Claude, sesión <url>`.
+   Al cerrar o actualizar, la nota se REESCRIBE entera, no se le agrega texto encima. Queda `done=false` hasta que se cierre (punto 4). Si la sesión termina sin
    cerrar, la tarea queda en la agenda: ése es el objetivo.
 3. **Excepción del dueño:** Thomas Loekemeyer NO usa Planify. Sus pedidos se cargan en el
    Planify de **quien corresponda según el área del pedido** con el nombre antepuesto por **`Th `**
@@ -23,7 +24,7 @@ hacer sin figurar en la agenda de alguien.
 **Dónde:** proyecto Supabase de Gestión Virgilio `hrxfctzncixxqmpfhskv`, schema `planify`.
 Empleados activos con Planify (`planify.employees`): Marianela Becker **38**, Luis Rial Otero
 **52**, Gastón Dalponte **61**, Tomás Beviglia **20**, Gonzalez Tomas 16, Elías Irace 1,
-Nazareno Rodríguez 27, Angely Asuaje 22, Viviana Gauna 4, Alan Gonzalez 5, Diego Mollo 44,
+Damián Loekemeyer 13, Nazareno Rodríguez 27, Angely Asuaje 22, Viviana Gauna 4, Alan Gonzalez 5, Diego Mollo 44,
 Nora Heredia 33, Juan Cruz Karaygan 51, Pablo Martos 6, Martín Cornejo 34, Martín Pregelj 15,
 Romina Maturano 55, Iván Meta 58, Jhonny Cartaya 46. Si el nombre no está, buscar:
 `select id, nombre from planify.employees where activo and nombre ilike '%<apellido>%'`.
@@ -33,21 +34,21 @@ Romina Maturano 55, Iván Meta 58, Jhonny Cartaya 46. Si el nombre no está, bus
 insert into planify.tasks (name, type, prio, time, date, note, rec, done, assignment_type,
   employee_id, department_id, system_generated, broadcast, created_at, updated_at)
 values ('<resumen ≤60>', 'tarea', 'normal', '09:00', to_char(now() at time zone
-  'America/Argentina/Buenos_Aires', 'YYYY-MM-DD'), '<contexto 1-3 líneas> — cargado desde
-  sesión de Claude', 'none', false, 'employee', <employee_id>, null, false, false, now(), now())
+  'America/Argentina/Buenos_Aires', 'YYYY-MM-DD'), 'Falta: <qué>. Pedido de <Nombre> ·
+  cargada por Claude, sesión <url>', 'none', false, 'employee', <employee_id>, null, false, false, now(), now())
 returning id;
--- cierre (cuando la persona la da por terminada)
+-- cierre (por criterio propio, ver punto 4)
 update planify.tasks set done = true, updated_at = now() where id = <id>;
 ```
 
-Avisar en el chat el `id` al crearla y al cerrarla. No crear tareas para preguntas o consultas
+Avisar en el chat el NOMBRE de la tarea (no el `id`) al crearla y al cerrarla. No crear tareas para preguntas o consultas
 que se responden en el momento; sólo para pedidos que implican hacer algo.
 
 4. **Cierre por criterio propio, no sólo por "listo".** Claude evalúa si el objetivo del
    pedido se cumplió (lo entregado funciona, está commiteado/aplicado, y no quedó ninguna
-   parte del pedido sin hacer). Cuando lo considere cumplido, pregunta **"¿Falta algo más
-   para dar por cerrada la tarea?"** — si la persona dice que no (o no pide nada más
-   dentro de esa tarea), `done=true`. Si dice "listo" antes, también se cierra. Lo que se
+   parte del pedido sin hacer). Cuando lo considere cumplido, pone `done=true` SIN preguntar
+   y avisa. **Prohibido preguntar "¿Falta algo más para dar por cerrada la tarea?"**.
+   Si la persona dice "listo" antes, también se cierra. Lo que se
    pidió y quedó a medias NO se cierra: se deja abierta con la nota actualizada
    ("queda pendiente: …").
 
@@ -65,6 +66,12 @@ que se responden en el momento; sólo para pedidos que implican hacer algo.
    se lo crea, o se le hace un cambio), copiarle este bloque entero (creando el `CLAUDE.md`
    si no existe) y commitearlo en ese repo, avisando en el chat. Así el dueño no tiene que
    pedirlo cada vez. Fuente canónica del bloque: `CLAUDE.md` de `loekemeyer/pagina-LK-copia`.
+
+## REGLA: trailer de autoría en cada commit
+
+Todo commit lleva `Hecho-por: <Nombre> (employee_id N)`: el que HACE el trabajo, no el que lo
+pide. Sólo si es otra persona, agregar `Pedido-por: <Nombre>`. Motivo: 275 de 309 commits tienen
+el mismo autor de git, y sin este trailer es imposible saber quién trabajó.
 
 ## REGLA: auditar en Supabase cada problema del repo y su solucion
 
